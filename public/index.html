@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2a1650">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Joker Karo">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<title>Joker Karo Online</title>
+<style>
+:root{--cw:clamp(36px,13.5vh,66px);--gold:#ffd34d;--ink:#f4f0ff;--mut:#b9aedb;--pan:#241a3c;--ov:-.45;box-sizing:border-box}
+@supports (height:1dvh){:root{--cw:clamp(36px,13.5dvh,66px)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;width:100%;overflow:hidden;position:fixed;inset:0;overscroll-behavior:none}
+body{background:radial-gradient(120% 90% at 50% 0%,#4a2a86 0,#2a1650 55%,#160c2c 100%);color:var(--ink);font:14px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#root{position:absolute;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+#rotate{display:none;position:absolute;inset:0;z-index:99;background:#160c2c;align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center;padding:24px;font-size:18px}
+#rotate i{width:54px;height:34px;border:3px solid var(--gold);border-radius:6px;display:block;animation:rot 2s ease-in-out infinite}
+@keyframes rot{0%,30%{transform:rotate(90deg)}70%,100%{transform:rotate(0)}}
+@media (orientation:portrait){#rotate{display:flex}#root{visibility:hidden}}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.top{display:flex;align-items:center;gap:8px;padding:4px 12px;background:rgba(0,0,0,.38);font-size:12px;min-height:34px}
+.top .sp{flex:1}
+.pill{background:rgba(255,255,255,.12);border-radius:12px;padding:2px 10px;white-space:nowrap}
+.tb{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:4px 12px;min-height:28px}
+.tablewrap{position:relative;min-height:0;padding:4px 14px 2px}
+.table{position:absolute;inset:4px 14px 2px;border-radius:34px;border:clamp(5px,1.6vh,10px) solid transparent;background:radial-gradient(ellipse at 50% 45%,#35a05a 0,#1f7040 62%,#154d2c 100%) padding-box,linear-gradient(160deg,#e6b45c,#8a5a1c 55%,#d9a24a) border-box;box-shadow:inset 0 0 40px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.45)}
+.table::before{content:"JOKER KARO";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-weight:900;letter-spacing:.12em;font-size:clamp(18px,7vh,40px);color:rgba(255,255,255,.09);white-space:nowrap;pointer-events:none}
+.seat{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10px;text-align:center}
+.av{position:relative;width:clamp(26px,8vh,40px);height:clamp(26px,8vh,40px);border-radius:50%;background:var(--c);border:2px solid rgba(255,255,255,.7);display:grid;place-items:center;font-weight:800;font-size:clamp(12px,3.6vh,18px);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.av .cnt{position:absolute;right:-9px;bottom:-5px;font-style:normal;font-size:10px;font-weight:700;background:#fff;color:#2a1650;border-radius:6px;padding:0 4px;min-width:16px;text-align:center}
+.np{background:rgba(0,0,0,.55);border-radius:10px;padding:0 8px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.sub{color:#e9e2ff;text-shadow:0 1px 2px #000;display:flex;gap:2px 5px;flex-wrap:wrap;justify-content:center;font-size:clamp(8px,2.5vh,10px)}
+@supports (height:1dvh){.sub{font-size:clamp(8px,2.5dvh,10px)}}
+.sub span{white-space:nowrap}
+.ck{background:#ff5d3a;color:#fff;border-radius:8px;padding:0 6px;font-size:10px;animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.12)}}
+.seat.turn .av,.me.turn .av{box-shadow:0 0 0 3px var(--gold),0 0 16px var(--gold)}
+.seat.out{opacity:.4;filter:grayscale(1)}
+.seat.off .av{border-style:dashed;opacity:.65}
+.center{position:absolute;left:50%;top:55%;transform:translate(-50%,-52%);display:flex;gap:calc(var(--cw)*.55);align-items:center}
+.pile{position:relative;width:calc(var(--cw)*.8);aspect-ratio:100/140}
+.pile svg{display:block;width:100%;height:auto}
+.pile .stk>*,.pile .p1,.pile .p2{position:absolute;left:0;top:0;width:100%}
+.pile .stk>*:nth-child(2){left:2px;top:-2px}.pile .stk>*:nth-child(3){left:4px;top:-4px}
+.pile .p2{transform:rotate(-9deg);left:-6px;opacity:.9}
+.pile .empty{position:absolute;inset:0;border:2px dashed rgba(255,255,255,.35);border-radius:9px}
+.pile .badge{position:absolute;right:-8px;bottom:-8px;background:rgba(0,0,0,.7);border-radius:10px;padding:0 7px;font-size:11px;font-weight:700;z-index:2}
+.pile.act{cursor:pointer}
+.pile.act::after{content:"";position:absolute;inset:-9px;border:3px solid #5be37d;border-radius:14px;box-shadow:0 0 14px #5be37d;pointer-events:none;animation:glow 1.2s infinite}
+.pile.over::after{content:"";position:absolute;inset:-9px;border:3px solid var(--gold);border-radius:14px}
+@keyframes glow{50%{opacity:.45}}
+.msg{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);background:rgba(0,0,0,.5);border-radius:14px;padding:2px 14px;font-size:clamp(11px,3.3vh,14px);white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis}
+.panel{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(20,10,40,.88);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:10px 16px;text-align:center;max-width:80%;z-index:5}
+.panel h2{margin:0 0 4px;font-size:15px}
+.panel p{margin:2px 0 6px;color:var(--mut);font-size:12px}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.b{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:12px;padding:6px 14px;min-height:34px;font-weight:600}
+.b.pri{background:#2fa764;border-color:#52d98a;color:#fff}
+.b.ckb{background:#ff7a1a;border-color:#ffab6b;color:#fff}
+.b:disabled{opacity:.35;cursor:default}
+.dock{display:grid;grid-template-columns:minmax(80px,13%) minmax(0,1fr) minmax(118px,18%);gap:6px;align-items:end;padding:2px 12px 6px;background:linear-gradient(transparent,rgba(0,0,0,.4))}
+.me{display:flex;align-items:center;gap:6px;min-width:0}
+.me .mt{display:flex;flex-direction:column;font-size:11px;min-width:0}
+.me .mt b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+.hands{display:flex;gap:5px;align-items:flex-end;justify-content:center;min-width:0;overflow:hidden;padding-top:14px}
+.grp{position:relative;border:1.5px dashed rgba(255,255,255,.3);border-radius:10px;padding:13px 4px 3px;min-width:calc(var(--cw)*1.1);flex:0 0 auto}
+.grp{cursor:pointer;min-height:calc(var(--cw)*1.4 + 16px)}
+.grp.rest{flex:0 0 auto;border-color:rgba(255,255,255,.15)}
+.grp.tgt{border-color:var(--gold);background:rgba(255,211,77,.07)}
+.grp.ok{border-color:#5be37d;border-style:solid;background:rgba(91,227,125,.1)}
+.grp.over{border-color:var(--gold);background:rgba(255,211,77,.12)}
+.gl{position:absolute;left:6px;top:0;font-size:9px;color:var(--mut);white-space:nowrap}
+.grp.ok .gl{color:#8cf0a8}
+.cards{display:flex}
+.cards .c:not(:first-child){margin-left:calc(var(--cw)*var(--ov))}
+.c{padding:0;border:0;background:none;width:var(--cw);flex:0 0 auto;border-radius:8px;touch-action:none;transition:transform .12s}
+.c svg{display:block;width:100%;height:auto;pointer-events:none;filter:drop-shadow(0 1px 3px rgba(0,0,0,.45))}
+.c.sel{transform:translateY(-14px);filter:drop-shadow(0 0 6px var(--gold))}
+.c[draggable=true]{cursor:grab}
+.acts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px;min-width:0}
+.acts .b{padding:5px 3px;font-size:12px;min-height:32px;line-height:1.1}
+.acts .wide{grid-column:1/3}
+.ghost{position:fixed;z-index:80;pointer-events:none;width:var(--cw);opacity:.92;transform:translate(-50%,-60%) rotate(5deg)}
+.ghost svg{display:block;width:100%;height:auto}
+.modal{position:absolute;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:40}
+.sheet{background:var(--pan);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:10px 12px;width:min(94vw,640px);max-height:92%;overflow:auto;font-size:12px}
+.sheet h2{margin:0 0 6px;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+.sheet table{border-collapse:collapse;width:100%}
+.sheet th,.sheet td{padding:3px 6px;text-align:left;border-bottom:1px solid rgba(255,255,255,.12);white-space:nowrap}
+.sheet tr.cur td{background:rgba(255,211,77,.15);font-weight:700}
+.sheet tr.out td{opacity:.45;text-decoration:line-through}
+.sheet .log{margin:6px 0 0;padding-left:16px;color:var(--mut);max-height:110px;overflow:auto}
+.sheet select,.sheet input{background:#352858;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:5px 8px}
+.toast{position:fixed;top:8px;left:50%;transform:translateX(-50%);background:#ff5d3a;color:#fff;padding:6px 16px;border-radius:14px;z-index:90;font-weight:600;max-width:90vw;text-align:center}
+.home{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;padding:12px 28px;height:100%}
+.home h1{margin:6px 0 2px;font-size:clamp(18px,6vh,28px)}
+.home p{margin:0;color:var(--mut);font-size:12px}
+.home .prev{display:flex;gap:10px}
+.home .prev .c{width:clamp(46px,16vh,84px);cursor:default;transform:none}
+.home .prev .c:nth-child(1){transform:rotate(-8deg)}.home .prev .c:nth-child(3){transform:rotate(8deg)}
+.hr{display:flex;flex-direction:column;gap:8px;max-width:360px}
+.hr input,.hr select{background:#352858;border:1px solid rgba(255,255,255,.28);border-radius:10px;padding:8px 12px;min-height:38px;width:100%}
+.row2{display:flex;gap:8px}.row2>*{flex:1}
+.hr .names{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.hr .pn{min-height:32px;padding:4px 10px}
+.err{color:#ff8f7a;font-weight:600;min-height:16px;font-size:12px}
+</style>
+</head>
+<body>
+<div id="rotate"><i></i><div>Putar HP ke mode <b>landscape</b><br><span style="font-size:13px;color:#b9aedb">Joker Karo dimainkan secara mendatar</span></div></div>
+<div id="root"></div>
+<script src="/cards.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PAL=['#e4572e','#17a398','#e0a100','#6aa82f','#9b5de5','#e0489a','#2b8de0'];
+const key=c=>c.joker?999:'SHDC'.indexOf(c.suit)*20+c.rank;
+const lab=c=>CardArt.label(c);
+const COARSE=matchMedia('(pointer:coarse)').matches;
+let THEME='klasik',SAVED='';try{THEME=localStorage.theme||'klasik';SAVED=localStorage.pname||''}catch(e){}
+if(!CardArt.themes[THEME])THEME='klasik';
+let ws=null,S=null,ROOM='',SEL=null,Z=[[],[],[],[]],M=null,SUP=0;const ZS={};
+const send=o=>ws&&ws.readyState==1&&ws.send(JSON.stringify(o));
+const act=(t,o={})=>send({type:t,...o});
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
+function setTheme(t){THEME=t;try{localStorage.theme=t}catch(e){}S?render():home()}
+const themeSel=()=>`<select onchange="setTheme(this.value)">${Object.keys(CardArt.themes).map(k=>`<option value="${k}"${k==THEME?' selected':''}>Tema ${CardArt.themes[k].name}</option>`).join('')}</select>`;
+const art=c=>CardArt.svg(c,THEME);
+
+// ---- aturan set di sisi klien (hanya untuk tanda centang; keputusan tetap di server) ----
+const nat=cs=>cs.filter(c=>!c.joker);
+function ser(cs){const n=cs.length;if(n<3||n>4)return false;const t=nat(cs);if(!t.length)return true;if(t.some(c=>c.suit!=t[0].suit))return false;const op=t.map(c=>c.rank==1?[1,14]:[c.rank]);for(let st=1;st+n-1<=14;st++){const en=st+n-1;const as=(i,u)=>{if(i==op.length)return true;for(const p of op[i]){if(p<st||p>en||u.has(p))continue;u.add(p);if(as(i+1,u))return true;u.delete(p)}return false};if(as(0,new Set))return true}return false}
+const grp=cs=>{const n=cs.length;if(n<3||n>4)return false;const t=nat(cs);return t.every(c=>c.rank==t[0].rank)};
+
+function connect(name,room,access){
+  ws=new WebSocket((location.protocol=='https:'?'wss://':'ws://')+location.host);
+  ws.onopen=()=>send({type:'join',name,room,access,token:sessionStorage.token});
+  ws.onmessage=e=>{const m=JSON.parse(e.data);
+    if(m.type=='joined'){sessionStorage.token=m.token;sessionStorage.room=m.room;sessionStorage.name=name}
+    else if(m.type=='state'){S=m.state;ROOM=m.room;render()}
+    else if(m.type=='error'){toast(m.error);if(!S){sessionStorage.clear();home()}}};
+  ws.onclose=()=>{if(sessionStorage.token)setTimeout(()=>connect(sessionStorage.name,sessionStorage.room),2000)};
+}
+setInterval(()=>send({type:'ping'}),240000); // keep-alive tiap 4 menit
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&sessionStorage.token&&(!ws||ws.readyState>1))connect(sessionStorage.name,sessionStorage.room)});
+document.addEventListener('click',()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}},{once:true});
+
+function home(){
+  $('#root').innerHTML=`<div class="home"><div><div class="prev">${[{joker:true},{suit:'S',rank:1},{suit:'H',rank:12}].map(c=>`<span class="c">${art(c)}</span>`).join('')}</div><h1>Joker Karo Online</h1><p>Satu pemain membuat room, yang lain bergabung dengan kode room.</p></div>
+  <div class="hr"><div class="err" id="er"></div><input id="nm" placeholder="Nama Anda" maxlength="16" autocomplete="off" value="${esc(SAVED)}"><input id="ac" type="password" placeholder="Kode akses (jika ada)"><div class="row2"><button class="b pri" onclick="go('')">Buat room</button><input id="rm" placeholder="Kode room" maxlength="4" autocapitalize="characters" style="text-transform:uppercase"><button class="b" onclick="go($('#rm').value)">Gabung</button></div>${themeSel()}</div></div>`;
+}
+function go(room){const n=$('#nm').value.trim();if(!n)return toast('Isi nama dulu');try{localStorage.pname=n}catch(e){}SAVED=n;sessionStorage.clear();connect(n,room,$('#ac').value)}
+
+// ---- susun kartu ----
+function sync(){const ids=new Set(S.hand.map(c=>String(c.id)));Z=Z.map(a=>a.filter(i=>ids.has(String(i))).map(String));const used=new Set(Z.flat());for(const c of S.hand)if(!used.has(String(c.id)))Z[3].push(String(c.id))}
+function mv(id,z){if(!S.hand.some(c=>c.id==id))return;Z=Z.map(a=>a.filter(i=>i!=id));Z[z].push(String(id));ZS[S.myId]=Z;SEL=null;render()}
+let LP=0;
+function pick(id){const n=Date.now();if(n-SUP<150||n-LP<250)return;LP=n;SEL=SEL==id?null:id;render()}
+function zc(z){if(Date.now()-SUP<150)return;if(SEL!=null)mv(SEL,z)}
+function dump(id){if(id==null||id==='')return;SEL=null;act('discard',{cardId:id})}
+const cb=c=>`<button class="c${SEL==c.id?' sel':''}" data-card="${c.id}" onclick="event.stopPropagation();pick('${c.id}')" aria-label="${lab(c)}">${art(c)}</button>`;
+function mvDrop(e,z){e.preventDefault();mv(e.dataTransfer.getData('text'),z)}
+function dropDump(e){e.preventDefault();dump(e.dataTransfer.getData('text'))}
+
+// seret dengan sentuhan: tahan dan geser kartu ke Set 1-3, Sisa, atau tumpukan buangan
+let drag=null,ghost=null;
+const zoneAt=(x,y)=>{const el=document.elementFromPoint(x,y);return el&&el.closest('[data-zone]')};
+document.addEventListener('pointerdown',e=>{if(e.pointerType=='mouse'&&e.button!=0)return;const b=e.target.closest('[data-card]');if(b)drag={id:b.dataset.card,x:e.clientX,y:e.clientY,moved:false}});
+document.addEventListener('pointermove',e=>{if(!drag)return;if(!drag.moved){if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<6)return;drag.moved=true;const c=S.hand.find(x=>x.id==drag.id);ghost=document.createElement('div');ghost.className='ghost';ghost.innerHTML=art(c);document.body.appendChild(ghost)}
+  ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';document.querySelectorAll('.over').forEach(z=>z.classList.remove('over'));const t=zoneAt(e.clientX,e.clientY);if(t)t.classList.add('over');e.preventDefault()},{passive:false});
+function endDrag(e,cancel){if(!drag)return;const d=drag;drag=null;if(ghost){ghost.remove();ghost=null}document.querySelectorAll('.over').forEach(z=>z.classList.remove('over'));
+  if(d.moved){SUP=Date.now();if(!cancel){const t=zoneAt(e.clientX,e.clientY);if(t){if(t.dataset.zone=='d')dump(d.id);else mv(d.id,+t.dataset.zone)}}}}
+// ketuk zona saat ada kartu terpilih: dipindah lewat pointerup (iOS tidak selalu mengirim click ke div)
+document.addEventListener('pointerup',e=>{const d=drag,wasDrag=d&&d.moved;endDrag(e,false);
+  if(d&&!wasDrag){pick(d.id);return}
+  if(wasDrag||SEL==null||Date.now()-SUP<150||e.target.closest('[data-card]'))return;
+  const t=zoneAt(e.clientX,e.clientY);if(t&&t.dataset.zone!='d'){SUP=Date.now();mv(SEL,+t.dataset.zone)}});
+document.addEventListener('pointercancel',e=>endDrag(e,true));
+
+// ---- susun otomatis ----
+const pc=m=>{let c=0;while(m){m&=m-1;c++}return c};
+const f4=cs=>cs.length==4&&nat(cs).every(c=>c.rank==1);
+const val=c=>c.joker?0:c.rank==1?11:Math.min(c.rank,10);
+function an(cs){const o=new Map;for(let m=1;m<1<<cs.length;m++){const k=pc(m);if(k<3||k>4)continue;const sub=cs.filter((_,i)=>(m>>i)&1);const s=ser(sub);if(!s&&!grp(sub))continue;o.set(m,{m,s,a:f4(sub)})}return o}
+function bestWin(cs){const cand=cs.length==10?[{d:null,t:cs}]:cs.length==11?cs.map((c,i)=>({d:c,t:cs.filter((_,j)=>j!=i)})):[];let best=null;
+  for(const {d,t} of cand){const inf=an(t);
+    for(const a4 of inf.values()){if(pc(a4.m)!=4)continue;const rest=1023&~a4.m,low=rest&-rest;
+      for(const a of inf.values()){if(pc(a.m)!=3||(a.m&rest)!=a.m||!(a.m&low))continue;const b=inf.get(rest&~a.m);if(!b)continue;if(!(a4.s||a.s||b.s||a4.a))continue;
+        if(!best||(d&&best.d&&val(d)>val(best.d)))best={d,t,ms:[a.m,b.m,a4.m]}}}}
+  return best}
+function bestSets(cs){const n=cs.length,inf=an(cs),by=Array.from({length:n},()=>[]);for(const m of inf.keys())by[31-Math.clz32(m&-m)].push(m);const memo=new Map;
+  const go=(r,k)=>{if(!r)return[0,[]];const key=r*4+k;if(memo.has(key))return memo.get(key);const lo=31-Math.clz32(r&-r);let [b,bs]=go(r&~(1<<lo),k);b+=val(cs[lo]);
+    if(k>0)for(const m of by[lo]){if((m&r)!=m)continue;const [c,r2]=go(r&~m,k-1);if(c<b){b=c;bs=[m,...r2]}}
+    memo.set(key,[b,bs]);return[b,bs]};
+  return go((1<<n)-1,3)[1].map(m=>cs.filter((_,i)=>(m>>i)&1).map(c=>String(c.id)))}
+function autoArrange(){if(!S||!S.hand.length)return;const w=bestWin(S.hand);let g;
+  if(w)g=w.ms.map(m=>w.t.filter((_,i)=>(m>>i)&1).map(c=>String(c.id)));else g=bestSets(S.hand);
+  g.sort((a,b)=>a.length-b.length);const used=new Set(g.flat());
+  Z=[g[0]||[],g[1]||[],g[2]||[],S.hand.filter(c=>!used.has(String(c.id))).map(c=>String(c.id))];ZS[S.myId]=Z;SEL=null;
+  toast(w?'Kartu sudah lengkap 3-3-4. Tekan Ceki!/Masuk sesuai aturan.':g.length?'Disusun otomatis: '+g.length+' set. Sisanya di Sisa.':'Belum ada set yang bisa dibentuk.');render()}
+function openM(m){M=m;render()}
+function leave(){sessionStorage.clear();location.reload()}
+
+function render(){
+  if(!S)return;
+  const ids=S.players.map(p=>p.id),mi=ids.indexOf(S.myId),me=S.players[mi],host=S.myId==S.hostId,myTurn=S.currentId==S.myId,ph=S.phase;
+  const name=id=>esc((S.players.find(p=>p.id==id)||{}).name||'');
+  const opp=[];for(let k=1;k<S.players.length;k++)opp.push(S.players[(mi+k)%S.players.length]);
+  const dr=ph=='draw',discPhase=ph=='discard'&&myTurn,top=S.discard[S.discard.length-1],prev=S.discard[S.discard.length-2];
+  const playing=ph=='draw'||ph=='discard';
+
+  let seats=opp.map((p,i)=>{const th=(i+.5)*Math.PI/opp.length,x=50+43*Math.cos(th),y=50-31*Math.sin(th),ix=ids.indexOf(p.id);
+    return `<div class="seat${p.id==S.currentId?' turn':''}${p.out?' out':''}${p.connected?'':' off'}" style="left:${x}%;top:${y}%;max-width:${Math.max(15,Math.min(26,100/(opp.length+1)))}%"><div class="av" style="--c:${PAL[ix%7]}">${esc([...p.name][0]||'?').toUpperCase()}<i class="cnt">${p.handCount}</i></div><div class="np">${esc(p.name)}</div><div class="sub"><span>${p.chips} chip</span><span>${p.score} poin</span></div>${p.ceki&&!p.out?'<b class="ck">CEKI!</b>':''}</div>`}).join('');
+
+  const canTake=myTurn&&dr;
+  const center=playing||ph=='between_rounds'||ph=='over'?`<div class="center"><div class="pile${canTake?' act':''}"${canTake?` onclick="act('draw_deck')"`:''}><div class="stk">${CardArt.back(THEME)}${CardArt.back(THEME)}${CardArt.back(THEME)}</div><span class="badge">${S.deckCount}</span></div>
+    <div class="pile${canTake&&top?' act':''}"${canTake&&top?` onclick="act('draw_discard')"`:''}${discPhase?` data-zone="d" ondragover="event.preventDefault()" ondrop="dropDump(event)"`:''}>${prev?`<span class="p2">${art(prev)}</span>`:''}${top?`<span class="p1">${art(top)}</span>`:'<span class="empty"></span>'}<span class="badge">${S.discard.length}</span></div></div>`:'';
+  const msg=playing?`<div class="msg">${myTurn?(dr?'Ketuk tumpukan untuk mengambil kartu':'Pilih satu kartu lalu tekan Buang'):'Giliran '+name(S.currentId)}</div>`:'';
+
+  let panel='';
+  if(ph=='lobby')panel=`<div class="panel"><h2>Ruang tunggu · kode ${ROOM}</h2><p>${S.players.map(p=>esc(p.name)).join(', ')} (${S.players.length}/7)</p>${host?`<button class="b pri" onclick="act('start')" ${S.players.length<2?'disabled':''}>Mulai permainan</button>`:'<p>Menunggu host memulai.</p>'}</div>`;
+  else if(ph=='buy')panel=`<div class="panel"><h2>Pemain mati: ${S.pending.map(name).join(', ')}</h2>${S.pending.includes(S.myId)?`<div class="row"><button class="b pri" onclick="act('buy')">Beli (${S.buyCosts[me.buys]} chip)</button><button class="b" onclick="act('decline')">Tolak</button></div>`:'<p>Menunggu keputusan.</p>'}</div>`;
+  else if(ph=='topup')panel=`<div class="panel"><h2>Menunggu top up</h2><p>${S.pending.map(name).join(', ')} butuh chip. Host menekan +10 di Skor (3 menit).</p></div>`;
+  else if(ph=='between_rounds'||ph=='over'){const s=S.summary;
+    panel=`<div class="panel">${s?`<h2>${name(s.winnerId)} masuk${s.tag?' ('+esc(s.tag)+')':''}</h2><p>${S.players.filter(p=>s.points[p.id]!==undefined).map(p=>esc(p.name)+' '+s.points[p.id]).join(' · ')}</p>`:''}${ph=='over'?`<h2>Babak selesai</h2>${host?`<button class="b pri" onclick="act('next_babak')">Mulai babak baru</button>`:'<p>Menunggu host.</p>'}`:host?`<button class="b pri" onclick="act('next_round')">Ronde berikutnya</button>`:'<p>Menunggu host melanjutkan.</p>'}</div>`}
+
+  let hands='';
+  if(S.hand.length){Z=ZS[S.myId]||(ZS[S.myId]=[[],[],[],[]]);sync();ZS[S.myId]=Z;
+    hands=[0,1,2,3].map(z=>{const cs=Z[z].map(id=>S.hand.find(c=>c.id==id)).filter(Boolean).sort((a,b)=>key(a)-key(b));const ok=z<3&&(ser(cs)||grp(cs));
+      return `<div class="grp${z==3?' rest':''}${ok?' ok':''}${SEL!=null?' tgt':''}" data-zone="${z}" ondragover="event.preventDefault()" ondrop="mvDrop(event,${z})" onclick="zc(${z})"><span class="gl">${z<3?'Set '+(z+1):'Sisa'}${cs.length?' · '+cs.length:''}${ok?' ✓':''}</span><div class="cards">${cs.map(cb).join('')}</div></div>`}).join('')}
+
+  const dock=`<div class="dock"><div class="me${myTurn?' turn':''}"><div class="av" style="--c:${PAL[mi%7]}">${esc([...me.name][0]||'?').toUpperCase()}</div><div class="mt"><b>${esc(me.name)}</b><span>${me.chips} chip</span><span>${me.score} poin</span></div></div>
+    <div class="hands" id="hands">${hands}</div>
+    <div class="acts"><button class="b wide" onclick="autoArrange()" ${S.hand.length?'':'disabled'}>Susun otomatis</button><button class="b ckb" onclick="act('ceki')" ${myTurn?'':'disabled'}>${me.ceki?'Batal Ceki':'Ceki!'}</button><button class="b pri" onclick="act('declare')" ${S.canDeclare?'':'disabled'}>Masuk</button>${discPhase?`<button class="b wide" onclick="dump(SEL)" ${SEL==null?'disabled':''}>Buang</button>`:''}</div></div>`;
+
+  const topbar=`<div class="top"><b>${ROOM}</b><span>Babak ${S.babak} · Ronde ${S.round}</span><span class="sp"></span><span class="pill">Tengah ${S.center}</span><span class="pill">Pot ${S.pot}</span><button class="tb" onclick="openM('skor')">Skor</button><button class="tb" onclick="openM('menu')">Menu</button></div>`;
+
+  let modal='';
+  if(M=='skor')modal=`<div class="modal" onclick="M=null;render()"><div class="sheet" onclick="event.stopPropagation()"><h2>Papan skor <button class="tb" onclick="M=null;render()">Tutup</button></h2><table><tr><th>Pemain</th><th>Poin</th><th>Chip</th><th>Beli</th><th>Kartu</th>${host?'<th>Top up</th>':''}</tr>${S.players.map(p=>`<tr class="${p.out?'out':p.id==S.currentId?'cur':''}"><td>${esc(p.name)}${p.id==S.hostId?' (host)':''}${p.connected?'':' (terputus)'}${p.ceki&&!p.out?' CEKI!':''}</td><td>${p.score}</td><td>${p.chips}</td><td>${p.buys}/3</td><td>${p.handCount}</td>${host?`<td><button class="tb" onclick="act('topup',{playerId:'${p.id}',amount:10})">+10</button></td>`:''}</tr>`).join('')}</table><p style="margin:6px 0 0;color:var(--mut)">Tengah ${S.center} chip · Pot babak ${S.pot} chip · Tumpukan ${S.deckCount}</p></div></div>`;
+  else if(M=='menu')modal=`<div class="modal" onclick="M=null;render()"><div class="sheet" onclick="event.stopPropagation()"><h2>Menu <button class="tb" onclick="M=null;render()">Tutup</button></h2><div class="row" style="justify-content:flex-start;align-items:center">${themeSel()}<button class="tb" onclick="leave()">Keluar room</button></div><ul class="log">${S.log.map(l=>`<li>${esc(l)}</li>`).join('')}</ul><p style="margin:6px 0 0;color:var(--mut)">Masuk hanya aktif bila kartu lengkap 3-3-4 dan Ceki! sudah ditekan di giliran sebelumnya. ${COARSE?'Tahan dan geser kartu ke Set 1-3, atau ketuk kartu lalu ketuk Set.':'Seret kartu ke Set 1-3, atau klik kartu lalu klik Set.'}</p></div></div>`;
+
+  $('#root').innerHTML=topbar+`<div class="tablewrap"><div class="table">${seats}${center}${msg}${panel}</div></div>`+dock+modal;
+  fit();
+}
+// rapatkan tumpukan kartu bila tangan tidak muat di lebar layar (tanpa scroll)
+function fit(){const h=$('#hands');if(!h)return;const r=$('#root');for(const o of [.45,.5,.55,.6,.65,.7]){r.style.setProperty('--ov',-o);if(h.scrollWidth<=h.clientWidth+1)break}}
+addEventListener('resize',()=>S&&render());
+if('serviceWorker' in navigator&&(location.protocol=='https:'||location.hostname=='localhost'))navigator.serviceWorker.register('/sw.js').catch(()=>{});
+if(sessionStorage.token&&sessionStorage.room)connect(sessionStorage.name,sessionStorage.room);else home();
+</script>
+</body>
+</html>

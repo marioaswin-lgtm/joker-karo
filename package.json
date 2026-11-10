@@ -1,0 +1,23 @@
+{
+  "name": "joker-karo-engine",
+  "version": "1.8.0",
+  "description": "Rule engine Joker Karo Online (sesuai Game Rules Spec v1.1)",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsx server/main.ts",
+    "start": "tsx server/main.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  },
+  "dependencies": {
+    "@types/ws": "^8.18.2",
+    "tsx": "^4.23.15",
+    "ws": "^8.22.1"
+  }
+}

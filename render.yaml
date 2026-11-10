@@ -1,0 +1,14 @@
+# Blueprint Render.com (Deploy dari repo Git). Mendukung WebSocket.
+services:
+  - type: web
+    name: joker-karo-alpha
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: ACCESS_CODE
+        sync: false   # isi sendiri di dashboard; bagikan hanya ke tester
